@@ -3,6 +3,7 @@ package jcv.study.springstatemachine.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -14,9 +15,11 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "paymentservice")
 public class Payment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO,generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
     private Long id;
     @Enumerated(EnumType.STRING)
     private PaymentState state;
