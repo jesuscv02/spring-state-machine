@@ -34,7 +34,7 @@ public class PaymentStateChangeInterceptor extends StateMachineInterceptorAdapte
         Optional.ofNullable(message).flatMap(msg ->
                         Optional.ofNullable((Long) msg.getHeaders().getOrDefault(PaymentServiceImpl.PAYMENT_ID_HEADER, -1L)))
                 .ifPresent(paymentId -> {
-                    Payment payment = repository.findById(paymentId).orElseThrow(() -> new StateMachineException("There was no state machine with id: " + paymentId));
+                    Payment payment = repository.findById(paymentId).orElseThrow(() -> new RuntimeException("There was no state machine with id: " + paymentId));
                     payment.setState(state.getId());
                     repository.save(payment);
                 });
