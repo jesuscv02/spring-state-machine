@@ -37,7 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
     public StateMachine<PaymentState, PaymentEvent> preAuthPayment(Long paymentId) {
         StateMachine<PaymentState, PaymentEvent> stateMachine = build(paymentId);
         assert stateMachine != null;
-        sendEvent(paymentId, stateMachine, PaymentEvent.PRE_AUTH_APPROVED);
+        sendEvent(paymentId, stateMachine, PaymentEvent.PRE_AUTHORIZE);
         return stateMachine;
     }
 
@@ -46,10 +46,11 @@ public class PaymentServiceImpl implements PaymentService {
     public StateMachine<PaymentState, PaymentEvent> authPayment(Long paymentId) {
         StateMachine<PaymentState, PaymentEvent> stateMachine = build(paymentId);
         assert stateMachine != null;
-        sendEvent(paymentId, stateMachine, PaymentEvent.AUTH_APPROVED);
+        sendEvent(paymentId, stateMachine, PaymentEvent.AUTHORIZE);
         return stateMachine;
     }
 
+    @Deprecated
     @Transactional
     @Override
     public StateMachine<PaymentState, PaymentEvent> declineAuthPayment(Long paymentId) {
@@ -73,7 +74,7 @@ public class PaymentServiceImpl implements PaymentService {
             sm.getStateMachineAccessor()
                     .doWithAllRegions(sma -> {
                         sma.addStateMachineInterceptor(stateChangeInterceptor);
-                        sma.resetStateMachineReactively(new DefaultStateMachineContext<>(payment.getState(), null, null, null));
+                        sma.resetStateMachine(new DefaultStateMachineContext<>(payment.getState(), null, null, null));
                     });
             sm.start();
             return sm;
